@@ -15,20 +15,21 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """
         Initializes the class BaseModel
-        if kwargs is not emptty, each key of the dictionary is an
+        if kwargs is not empty, each key of the dictionary is an
         attribute name
         Otherwise, create id and created_at as a new instance
         """
         if kwargs:
-            for aa, ab in kwargs.items():
-                if aa == "created_at" or aa == "updated_at":
-                    ab = datetime.fromisoformat(ab)
-                if aa != "__class__":
-                    setattr(self, aa, ab)
+            for key, value in kwargs.items():
+                if key == "created_at" or key == "updated_at":
+                    value = datetime.fromisoformat(value)
+                if key != "__class__":
+                    setattr(self, key, value)
         else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
-            self.updated_at = self.created_at
+            self.updated_at = datetime.now()
+            self._get_storage().new(self)
 
     def __str__(self):
         """
@@ -42,6 +43,7 @@ class BaseModel:
         datetime
         """
         self.updated_at = datetime.now()
+        self._get_storage().save()
 
     def to_dict(self):
         """
@@ -55,3 +57,7 @@ class BaseModel:
         dict_rep["created_at"] = self.created_at.isoformat()
         dict_rep["updated_at"] = self.updated_at.isoformat()
         return dict_rep
+
+    def _get_storage(self):
+        from models import storage
+        return storage
