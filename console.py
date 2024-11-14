@@ -5,6 +5,7 @@ Entry point for the cmd interpreter
 import cmd
 from models.base_model import BaseModel
 from models import storage
+from models.user import User
 
 
 class HBNBCommand(cmd.Cmd):
@@ -12,7 +13,7 @@ class HBNBCommand(cmd.Cmd):
     Class, command interpreter
     """
     prompt = "(hbnb) "
-    classes = {"BaseModel": BaseModel}
+    classes = {"BaseModel": BaseModel, "User": User}
 
     def do_quit(self, arg):
         """
@@ -119,6 +120,7 @@ class HBNBCommand(cmd.Cmd):
         if len(args) < 2:
             print("** instance id missing **")
             return
+
         key = f"{args[0]}.{args[1]}"
         if key not in storage.all():
             print("** no instance found **")
@@ -129,6 +131,7 @@ class HBNBCommand(cmd.Cmd):
         if len(args) < 4:
             print("** value missing **")
             return
+
         instance = storage.all()[key]
         attr_name = args[2]
         attr_value = args[3].strip('"')

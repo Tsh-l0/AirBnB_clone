@@ -4,6 +4,7 @@ A class to manage file storage for objects
 """
 import json
 from models.base_model import BaseModel
+from models.user import User
 
 
 class FileStorage:
@@ -39,7 +40,7 @@ class FileStorage:
         """
         Deserializes the JSON file to __objects, if the JSON file exists
         """
-        cls_map = {"BaseModel": BaseModel}
+        cls_map = {"BaseModel": BaseModel, "User": User}
         try:
             with open(self.__file_path, "r") as f:
                 obj_dict = json.load(f)
