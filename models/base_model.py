@@ -29,7 +29,7 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            self._get_storage().new(self)
+            self.save()
 
     def __str__(self):
         """
@@ -42,8 +42,10 @@ class BaseModel:
         Updates public instance attribute 'updated_at' with the current
         datetime
         """
+        from models import storage
         self.updated_at = datetime.now()
-        self._get_storage().save()
+        storage.new(self)
+        storage.save()
 
     def to_dict(self):
         """
@@ -57,7 +59,3 @@ class BaseModel:
         dict_rep["created_at"] = self.created_at.isoformat()
         dict_rep["updated_at"] = self.updated_at.isoformat()
         return dict_rep
-
-    def _get_storage(self):
-        from models import storage
-        return storage
