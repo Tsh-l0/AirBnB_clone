@@ -106,6 +106,67 @@ class TestBaseModel(unittest.TestCase):
         self.assertIsInstance(uuid.UUID(instance1.id), uuid.UUID)
         self.assertIsInstance(uuid.UUID(instance2.id), uuid.UUID)
 
+    def test_instance_creation_kwargs(self):
+        """
+        Test that a new instance can be created using a dictionary
+        (kwargs)
+        """
+        my_model = BaseModel()
+        my_model.name = "My_First_Model"
+        my_model.my_number = 89
+        my_model_json = my_model.to_dict()
+
+        my_new_model = BaseModel(**my_model_json)
+        self.assertEqual(my_new_model.id, my_model.id)
+        self.assertEqual(my_new_model.created_at, my_model.created_at)
+        self.assertEqual(my_new_model.updated_at, my_model.updated_at)
+        self.assertEqual(my_new_model.name, my_model.name)
+        self.assertEqual(my_new_model.my_number, my_model.my_number)
+
+    def test_instance_created_at_updated_at_types(self):
+        """
+        Test that created_at and updated_at are datetime objects after
+        re-creating an instance
+        """
+        my_model = BaseModel()
+        my_model_json = my_model.to_dict()
+        my_new_model = BaseModel(**my_model_json)
+        self.assertIsInstance(my_new_model.created_at, datetime)
+        self.assertIsInstance(my_new_model.updated_at, datetime)
+
+    def test_instance_not_same_as_og(self):
+        """
+        Test that the new instance created with kwargs is not same as
+        original
+        """
+        my_model = BaseModel()
+        my_model_json = my_model.to_dict()
+        my_new_model = BaseModel(**my_model_json)
+        self.assertIsNot(my_model, my_new_model)
+
+    def test_instance_str_rep(self):
+        """
+        Test that the __str__ method works after re-creating an instance
+        """
+        my_model = BaseModel()
+        my_model_json = my_model.to_dict()
+        my_new_model = BaseModel(**my_model_json)
+        expected_str = "[BaseModel] ({}) {}".format(my_new_model.id,
+                                                    my_new_model.__dict__)
+        self.assertEqual(str(my_new_model), expected_str)
+
+    def test_created_at_and_updated_at_format(self):
+        """
+        Test that created_at and updated_at are correctly formatted in
+        the dictionary
+        """
+        my_model = BaseModel()
+        my_model_json = my_model.to_dict()
+        self.assertEqual(my_model_json['created_at'],
+                         my_model.created_at.isoformat())
+        self.assertEqual(my_model_json['updated_at'],
+                         my_model.updated_at.isoformat())
+
 
 if __name__ == '__main__':
     unittest.main()
